@@ -1,8 +1,10 @@
-# proj3
+# Commons
 
-Vite + React SPA template: React Router, Tailwind v4, shadcn/ui, TanStack Query, Zod, Vitest, Playwright + axe. CI runs format, lint, typecheck, tests, e2e, and build. Stack and conventions: see `AGENTS.md`.
+A calm, finite home for the content you follow: a unified subscription reader, personal interest spaces, and a personal knowledge environment. You set the volume and frequency of what reaches you. Scope: `docs/prd.md`.
 
-`notes` is an example feature: replace or delete `src/features/notes`.
+Built as a Vite + React SPA (React Router, Tailwind v4, shadcn/ui, TanStack Query, Zod, Vitest, Playwright + axe). CI runs format, lint, typecheck, tests, e2e, and build. Stack and conventions: see `AGENTS.md`.
+
+Pre-MVP. `notes` is leftover template scaffolding: replace it with the first PRD feature, then delete `src/features/notes`.
 
 ## Commands
 
