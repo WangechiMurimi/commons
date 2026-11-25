@@ -1,30 +1,32 @@
-# proj3 — Claude instructions
+# Commons — Claude instructions
 
 Stack, commands, layout, and deviations: @AGENTS.md
 Product requirements (what we're building and why): @docs/prd.md
 
-Global habits (TDD, GitHub Flow, Conventional Commits, rebase-merge) come from `~/.claude/CLAUDE.md`. This file adds the rules specific to proj3.
+Global habits (TDD, GitHub Flow, Conventional Commits, rebase-merge) come from `~/.claude/CLAUDE.md`. This file adds the rules specific to Commons.
 
 ## Project context
 
-- **What:** Temporary name for a Vite + React SPA built from `app-template`. Scope, users, and success metrics are in `docs/prd.md`.
+- **What:** Commons, a Vite + React SPA (from `app-template`) for curated, finite content consumption: unified reader, interest spaces, personal knowledge. Scope and metrics: `docs/prd.md`.
 - **Status:** Pre-MVP. The `notes` feature is template scaffolding. Replace it with the first PRD feature, then delete it.
-- **Rename:** When the real name is chosen, update `package.json` `name`, the `<title>` in `index.html`, the headings in `AGENTS.md` and this file, and the folder/repo name.
+- **Vocabulary:** Source, Item, Space, Delivery schedule, Shelf, Note. Use these terms in code, tests and docs.
 
 ## Architecture
 
-| Concern     | Rule                                                                                         |
-| ----------- | -------------------------------------------------------------------------------------------- |
-| Structure   | One folder per feature in `src/features/<name>/`: schema, repository, hooks, page, tests     |
-| Data access | Components → TanStack Query hooks → `<Feature>Repository` interface → implementation         |
-| Persistence | In-memory repository until the PRD needs per-user data; then Supabase (ADR 0001)             |
-| Permissions | Enforced by Postgres RLS (`user_id = auth.uid()`), never only in the client                  |
-| Validation  | Zod schema per entity; parse at every trust boundary (API, Supabase rows, URL params, forms) |
-| Types       | Derive with `z.infer<typeof Schema>`; don't hand-write duplicate interfaces                  |
-| Routing     | React Router; routes live in `src/app/`; set the page title with `usePageTitle`              |
-| UI          | shadcn/ui components in `src/components/ui/` (generated: add via CLI, edit sparingly)        |
-| Styling     | Tailwind v4 with `@theme` tokens in `src/index.css`; no hard-coded colors or spacing         |
-| Shared code | `src/lib/` only when two or more features need it                                            |
+| Concern     | Rule                                                                                            |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| Structure   | One folder per feature in `src/features/<name>/`: schema, repository, hooks, page, tests        |
+| Data access | Components → TanStack Query hooks → `<Feature>Repository` interface → implementation            |
+| Persistence | In-memory repository until the PRD needs per-user data; then Supabase (ADR 0001, 0004)          |
+| Ingestion   | Feeds are fetched server-side (Hono + Netlify functions), never from the browser (ADR 0003)     |
+| Delivery    | Items wait in the database until a delivery window opens; the client shows delivered items only |
+| Permissions | Enforced by Postgres RLS (`user_id = auth.uid()`), never only in the client                     |
+| Validation  | Zod schema per entity; parse at every trust boundary (API, Supabase rows, URL params, forms)    |
+| Types       | Derive with `z.infer<typeof Schema>`; don't hand-write duplicate interfaces                     |
+| Routing     | React Router; routes live in `src/app/`; set the page title with `usePageTitle`                 |
+| UI          | shadcn/ui components in `src/components/ui/` (generated: add via CLI, edit sparingly)           |
+| Styling     | Tailwind v4 with `@theme` tokens in `src/index.css`; no hard-coded colors or spacing            |
+| Shared code | `src/lib/` only when two or more features need it                                               |
 
 Decisions: [docs/adr/](docs/adr/). Write a new ADR (`NNNN-title.md`, the format of 0001) for any change to the stack, data model, auth, or hosting.
 
