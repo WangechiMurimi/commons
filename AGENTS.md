@@ -62,7 +62,7 @@ Add each item when its milestone starts, and ask first.
 
 | Item                           | Gap it fills                                  | Source         |
 | ------------------------------ | --------------------------------------------- | -------------- |
-| Supabase (Postgres, Auth, RLS) | Per-user data; magic-link sign-in             | ADR 0001, 0004 |
+| Supabase (Postgres, Auth, RLS) | Per-user data; password and Google sign-in    | ADR 0001, 0005 |
 | Hono on Netlify functions      | Server-side feed fetching (browsers hit CORS) | ADR 0003       |
 | RSS/Atom feed parser           | Reads untrusted feed XML                      | ADR 0003       |
 | Netlify scheduled functions    | Polling sources; expiring shelf items         | ADR 0003, 0004 |
