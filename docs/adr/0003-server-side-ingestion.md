@@ -16,6 +16,6 @@ Commons pulls content from user-chosen sources. Browsers block cross-origin requ
 
 ## Consequences
 
-- Adds a server component, which is a deviation from "no server by default" in the baseline.
+- Adds a server component; the app was otherwise client-only.
 - Needs a feed parser dependency and a Supabase project. Both are added when the first ingestion feature starts, not before.
 - Functions run locally with `netlify dev`, so behaviour matches production.
