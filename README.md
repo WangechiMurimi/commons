@@ -1,40 +1,41 @@
 # Commons
 
-A calm, finite home for the content you follow: a unified subscription reader, personal interest spaces, and a personal knowledge environment. You set the volume and frequency of what reaches you. Scope: `docs/prd.md`.
+A calm, finite home for the content you follow: a unified subscription reader, personal interest spaces, and a personal knowledge environment. You set the volume and frequency of what reaches you. No recommendation algorithm, no infinite scroll, no permanent archive.
 
-Built as a Vite + React SPA (React Router, Tailwind v4, shadcn/ui, TanStack Query, Zod, Vitest, Playwright + axe). CI runs format, lint, typecheck, tests, e2e, and build. Stack and conventions: see `AGENTS.md`.
+**Status:** pre-MVP
 
-Pre-MVP. `notes` is leftover template scaffolding: replace it with the first PRD feature, then delete `src/features/notes`.
+## Docs
+
+| Doc                        | Contents                                     |
+| -------------------------- | -------------------------------------------- |
+| [docs/prd.md](docs/prd.md) | Scope, domain vocabulary, MVP user stories   |
+| [docs/adr/](docs/adr/)     | Architecture decisions                       |
+| [AGENTS.md](AGENTS.md)     | Stack, architecture rules, conventions, done |
+
+## Stack
+
+Vite + React SPA with React Router, Tailwind v4 (`@theme` tokens) and shadcn/ui, TanStack Query over a feature repository, Zod at every trust boundary. Tests: Vitest, Testing Library, Playwright, axe. Hosted on Netlify.
+
+Planned, added per milestone: Supabase (per-user data, magic-link auth), Hono on Netlify functions (server-side feed fetching), an RSS/Atom parser, and Netlify scheduled functions. See ADRs 0001, 0003 and 0004.
+
+## Getting started
+
+Requires Node 26 (`.nvmrc`) and pnpm (pinned via `packageManager`).
+
+```powershell
+pnpm install
+pnpm exec playwright install chromium   # once, before the first pnpm e2e
+pnpm dev
+```
 
 ## Commands
 
-`pnpm dev` · `pnpm test` · `pnpm e2e` · `pnpm lint` · `pnpm typecheck` · `pnpm format` · `pnpm build`
+| Task                   | Command                                              |
+| ---------------------- | ---------------------------------------------------- |
+| Dev server             | `pnpm dev`                                           |
+| Unit + component tests | `pnpm test` (`pnpm test:watch`)                      |
+| E2E + accessibility    | `pnpm e2e`                                           |
+| Lint / types / format  | `pnpm lint` · `pnpm typecheck` · `pnpm format:check` |
+| Build                  | `pnpm build`                                         |
 
-Before the first `pnpm e2e`, install the browser: `pnpm exec playwright install chromium`.
-
-## Start a new app
-
-```powershell
-gh repo create <name> --template WangechiMurimi/app-template --private --clone
-cd <name>; pnpm install
-```
-
-Then rename the project: `name` in `package.json`, and the `<title>` in `index.html` (page titles are set per route with `usePageTitle`).
-
-## Environment
-
-Supabase is optional. To use it locally, copy the example file (`.env.local` is gitignored):
-
-```powershell
-Copy-Item .env.example .env.local
-```
-
-Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in `.env.local`, and in the Netlify environment variables for deploys.
-
-## Repo settings
-
-Template settings are NOT inherited. In each new repo, run:
-
-```powershell
-gh repo edit --enable-rebase-merge --enable-squash-merge=false --enable-merge-commit=false --delete-branch-on-merge
-```
+A change is done when `pnpm typecheck && pnpm lint && pnpm test` passes, plus `pnpm e2e` when routes or pages change. CI runs all of these on every PR; Lefthook runs Prettier and ESLint on staged files at commit time.
