@@ -6,6 +6,8 @@ import {
   GENERIC_SIGN_IN_ERROR,
   createInMemoryAuthRepository,
 } from "./auth-repository";
+import type { AuthRepository } from "./auth-repository";
+import type { Session } from "./auth-schema";
 import { useGoogleSignIn, useSignIn } from "./use-auth";
 
 const accounts = [{ email: "reader@commons.test", password: "correct-horse" }];
@@ -30,8 +32,21 @@ describe("useSignIn", () => {
     expect(result.current.isIdle).toBe(true);
   });
 
-  it("goes pending, then succeeds with the session", async () => {
-    const { result } = renderHook(() => useSignIn(), { wrapper });
+  it("stays pending until the repository resolves, then succeeds", async () => {
+    // A held promise makes the pending state observable; the in-memory repository settles too fast.
+    let resolve: (session: Session) => void = () => {};
+    const slow: AuthRepository = {
+      signInWithPassword: () =>
+        new Promise<Session>((r) => {
+          resolve = r;
+        }),
+      signInWithGoogle: () => Promise.reject(new Error("unused")),
+    };
+    const { result } = renderHook(() => useSignIn(), {
+      wrapper: ({ children }) => (
+        <AppProviders authRepository={slow}>{children}</AppProviders>
+      ),
+    });
     act(() => {
       result.current.mutate({
         email: "reader@commons.test",
@@ -39,6 +54,9 @@ describe("useSignIn", () => {
       });
     });
     await waitFor(() => expect(result.current.isPending).toBe(true));
+    await act(async () => {
+      resolve({ userId: "u1", email: "reader@commons.test" });
+    });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.email).toBe("reader@commons.test");
   });
