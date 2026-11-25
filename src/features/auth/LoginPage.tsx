@@ -91,7 +91,7 @@ export function LoginPage() {
           <Field
             id="login-password"
             label="Password"
-            labelAside={
+            footer={
               <Link to="/forgot-password" className={`${LINK_CLASS} text-sm`}>
                 Forgot password?
               </Link>
@@ -160,7 +160,7 @@ export function LoginPage() {
 type FieldProps = {
   id: string;
   label: string;
-  labelAside?: ReactNode;
+  footer?: ReactNode;
   inputRef: RefObject<HTMLInputElement | null>;
   name: string;
   type: "email" | "password";
@@ -173,7 +173,7 @@ type FieldProps = {
 function Field({
   id,
   label,
-  labelAside,
+  footer,
   inputRef,
   onChange,
   error,
@@ -182,10 +182,7 @@ function Field({
   const errorId = `${id}-error`;
   return (
     <div className="space-y-2">
-      <div className="flex items-baseline justify-between">
-        <Label htmlFor={id}>{label}</Label>
-        {labelAside}
-      </div>
+      <Label htmlFor={id}>{label}</Label>
       <Input
         id={id}
         ref={inputRef}
@@ -200,6 +197,8 @@ function Field({
           {error}
         </p>
       )}
+      {/* After the input in DOM order, so Tab goes email → password → link. */}
+      {footer && <div className="text-right">{footer}</div>}
     </div>
   );
 }
