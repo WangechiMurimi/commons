@@ -57,7 +57,7 @@ Each story gets one Playwright journey in `e2e/`.
 ## Constraints
 
 - Accessibility: WCAG 2.2 AA (axe passes on every page).
-- Auth: Supabase email magic link [ADR 0004](adr/0004-data-model-and-auth.md).
+- Auth: email and password, Google, password recovery [ADR 0005](adr/0005-auth-methods.md).
 - Ingestion: server-side feed fetching, because browsers cannot fetch most feeds (CORS). See [ADR 0003](adr/0003-server-side-ingestion.md).
 - Hosting: Netlify.
 
