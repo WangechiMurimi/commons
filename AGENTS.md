@@ -2,7 +2,7 @@
 
 A Vite + React SPA for curated, finite content consumption: a unified reader, interest spaces, and personal knowledge. Scope and user stories: [docs/prd.md](docs/prd.md). Decisions: [docs/adr/](docs/adr/).
 
-**Status:** pre-MVP. `src/features/notes` is template scaffolding. Replace it with the first PRD feature, then delete it.
+**Status:** pre-MVP
 
 ## Core Principles
 
