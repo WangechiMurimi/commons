@@ -26,6 +26,18 @@ describe("App routes", () => {
     expect(document.title).toBe("Notes");
   });
 
+  it("renders the sign-in page at /login", () => {
+    renderAt("/login");
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Sign in" }),
+    ).toBeInTheDocument();
+  });
+
+  it("sets the document title to Sign in at /login", () => {
+    renderAt("/login");
+    expect(document.title).toBe("Sign in");
+  });
+
   it("sets the document title to Page not found for unknown routes", () => {
     renderAt("/does-not-exist");
     expect(document.title).toBe("Page not found");
