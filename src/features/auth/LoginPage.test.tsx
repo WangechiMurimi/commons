@@ -1,5 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { AppProviders } from "@/app/providers";
 import { createInMemoryAuthRepository } from "./auth-repository";
@@ -72,6 +73,49 @@ describe("LoginPage content", () => {
     expect(screen.getByLabelText("Password")).toHaveAttribute(
       "autocomplete",
       "current-password",
+    );
+  });
+});
+
+describe("LoginPage validation", () => {
+  it("announces both errors and focuses the email field on an empty submit", async () => {
+    const user = userEvent.setup();
+    renderLogin();
+    await user.click(screen.getByRole("button", { name: "Sign in" }));
+
+    const email = screen.getByLabelText("Email");
+    const password = screen.getByLabelText("Password");
+    expect(screen.getAllByRole("alert")).toHaveLength(2);
+    expect(email).toBeInvalid();
+    expect(email).toHaveAccessibleDescription("Email is required");
+    expect(password).toBeInvalid();
+    expect(password).toHaveAccessibleDescription("Password is required");
+    expect(email).toHaveFocus();
+  });
+
+  it("focuses the password field when only the password is invalid", async () => {
+    const user = userEvent.setup();
+    renderLogin();
+    await user.type(screen.getByLabelText("Email"), "reader@commons.test");
+    await user.type(screen.getByLabelText("Password"), "short");
+    await user.click(screen.getByRole("button", { name: "Sign in" }));
+
+    expect(screen.getByLabelText("Password")).toHaveAccessibleDescription(
+      "Password must be at least 8 characters",
+    );
+    expect(screen.getByLabelText("Email")).toBeValid();
+    expect(screen.getByLabelText("Password")).toHaveFocus();
+  });
+
+  it("explains a malformed email", async () => {
+    const user = userEvent.setup();
+    renderLogin();
+    await user.type(screen.getByLabelText("Email"), "not-an-email");
+    await user.type(screen.getByLabelText("Password"), "long-enough-pw");
+    await user.click(screen.getByRole("button", { name: "Sign in" }));
+
+    expect(screen.getByLabelText("Email")).toHaveAccessibleDescription(
+      "Enter a valid email address",
     );
   });
 });
