@@ -68,6 +68,20 @@ describe("LoginPage content", () => {
     ).toHaveAttribute("href", "/signup");
   });
 
+  it("tabs from email to password before reaching the recovery link", async () => {
+    const user = userEvent.setup();
+    renderLogin();
+    await user.click(screen.getByLabelText("Email"));
+    await user.tab();
+    expect(screen.getByLabelText("Password")).toHaveFocus();
+    await user.tab();
+    expect(
+      screen.getByRole("link", { name: "Forgot password?" }),
+    ).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Sign in" })).toHaveFocus();
+  });
+
   it("autofills credentials via autocomplete hints", () => {
     renderLogin();
     expect(screen.getByLabelText("Email")).toHaveAttribute(
