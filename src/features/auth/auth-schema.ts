@@ -14,3 +14,10 @@ export const SignInSchema = z.object({
 });
 
 export type SignIn = z.infer<typeof SignInSchema>;
+
+export const SessionSchema = z.object({
+  userId: z.string().min(1),
+  email: z.email(),
+});
+
+export type Session = z.infer<typeof SessionSchema>;

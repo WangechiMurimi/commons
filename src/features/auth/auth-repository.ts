@@ -1,7 +1,5 @@
 import { SignInSchema } from "./auth-schema";
-import type { SignIn } from "./auth-schema";
-
-export type Session = { userId: string; email: string };
+import type { Session, SignIn } from "./auth-schema";
 
 export type Account = { email: string; password: string };
 
