@@ -13,29 +13,29 @@ Global habits (TDD, GitHub Flow, Conventional Commits, rebase-merge) come from `
 
 ## Architecture
 
-| Concern       | Rule                                                                                       |
-| ------------- | ------------------------------------------------------------------------------------------ |
-| Structure     | One folder per feature in `src/features/<name>/`: schema, repository, hooks, page, tests   |
-| Data access   | Components → TanStack Query hooks → `<Feature>Repository` interface → implementation       |
-| Persistence   | In-memory repository until the PRD needs per-user data; then Supabase (ADR 0001)           |
-| Permissions   | Enforced by Postgres RLS (`user_id = auth.uid()`), never only in the client                |
-| Validation    | Zod schema per entity; parse at every trust boundary (API, Supabase rows, URL params, forms) |
-| Types         | Derive with `z.infer<typeof Schema>`; don't hand-write duplicate interfaces                |
-| Routing       | React Router; routes live in `src/app/`; set the page title with `usePageTitle`           |
-| UI            | shadcn/ui components in `src/components/ui/` (generated: add via CLI, edit sparingly)     |
-| Styling       | Tailwind v4 with `@theme` tokens in `src/index.css`; no hard-coded colors or spacing      |
-| Shared code   | `src/lib/` only when two or more features need it                                         |
+| Concern     | Rule                                                                                         |
+| ----------- | -------------------------------------------------------------------------------------------- |
+| Structure   | One folder per feature in `src/features/<name>/`: schema, repository, hooks, page, tests     |
+| Data access | Components → TanStack Query hooks → `<Feature>Repository` interface → implementation         |
+| Persistence | In-memory repository until the PRD needs per-user data; then Supabase (ADR 0001)             |
+| Permissions | Enforced by Postgres RLS (`user_id = auth.uid()`), never only in the client                  |
+| Validation  | Zod schema per entity; parse at every trust boundary (API, Supabase rows, URL params, forms) |
+| Types       | Derive with `z.infer<typeof Schema>`; don't hand-write duplicate interfaces                  |
+| Routing     | React Router; routes live in `src/app/`; set the page title with `usePageTitle`              |
+| UI          | shadcn/ui components in `src/components/ui/` (generated: add via CLI, edit sparingly)        |
+| Styling     | Tailwind v4 with `@theme` tokens in `src/index.css`; no hard-coded colors or spacing         |
+| Shared code | `src/lib/` only when two or more features need it                                            |
 
 Decisions: [docs/adr/](docs/adr/). Write a new ADR (`NNNN-title.md`, the format of 0001) for any change to the stack, data model, auth, or hosting.
 
 ## Testing strategy
 
-| Layer                  | Tool                          | What it covers                                    | Where                         |
-| ---------------------- | ----------------------------- | ------------------------------------------------- | ----------------------------- |
-| Schema / pure logic    | Vitest                        | Zod parse/reject cases, repository contract       | `*.test.ts` beside the source |
-| Components             | Vitest + Testing Library      | Rendering, user events, loading/error/empty states | `*.test.tsx` beside the source |
-| Journeys               | Playwright                    | One happy path per PRD user story                 | `e2e/`                        |
-| Accessibility          | axe (`@axe-core/playwright`)  | Every page in each state (empty, filled, error)   | `e2e/`                        |
+| Layer               | Tool                         | What it covers                                     | Where                          |
+| ------------------- | ---------------------------- | -------------------------------------------------- | ------------------------------ |
+| Schema / pure logic | Vitest                       | Zod parse/reject cases, repository contract        | `*.test.ts` beside the source  |
+| Components          | Vitest + Testing Library     | Rendering, user events, loading/error/empty states | `*.test.tsx` beside the source |
+| Journeys            | Playwright                   | One happy path per PRD user story                  | `e2e/`                         |
+| Accessibility       | axe (`@axe-core/playwright`) | Every page in each state (empty, filled, error)    | `e2e/`                         |
 
 - Write the failing test first, run it, and confirm it fails for the right reason.
 - Query by role, label, or text (`getByRole`, `getByLabelText`). Never query by CSS class or test-id unless there is no accessible name.

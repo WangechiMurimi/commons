@@ -1,5 +1,26 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "sandbox": {
+    "enabled": true,
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowedDomains": [
+        "registry.npmjs.org",
+        "github.com",
+        "*.github.com",
+        "*.githubusercontent.com",
+        "cdn.playwright.dev",
+        "playwright.download.prss.microsoft.com",
+        "*.supabase.co"
+      ]
+    },
+    "excludedCommands": [
+      "gh *",
+      "pnpm e2e",
+      "pnpm e2e *",
+      "pnpm exec playwright *"
+    ]
+  },
   "permissions": {
     "defaultMode": "default",
     "allow": [
