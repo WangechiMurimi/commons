@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      # typescript-eslint 8.73 has a peer of typescript ">=4.8.4 <6.1.0" (latest TS is 7.0.2).
+      - dependency-name: typescript
+        versions: [">=6.1.0"]
+      # eslint-plugin-jsx-a11y 6.10.2 has a peer of eslint up to ^9 (latest ESLint is 10.15).
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
