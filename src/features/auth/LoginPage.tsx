@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode, RefObject } from "react";
 import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,46 +74,34 @@ export function LoginPage() {
           aria-busy={signIn.isPending}
           className="space-y-6"
         >
-          <div className="space-y-2">
-            <Label htmlFor="login-email">Email</Label>
-            <Input
-              id="login-email"
-              ref={emailRef}
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              aria-invalid={errors.email !== undefined}
-              aria-describedby={errors.email ? "login-email-error" : undefined}
-              className={FIELD_CLASS}
-            />
-            <FieldError id="login-email-error" message={errors.email} />
-          </div>
+          <Field
+            id="login-email"
+            label="Email"
+            inputRef={emailRef}
+            name="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={setEmail}
+            error={errors.email}
+          />
 
-          <div className="space-y-2">
-            <div className="flex items-baseline justify-between">
-              <Label htmlFor="login-password">Password</Label>
+          <Field
+            id="login-password"
+            label="Password"
+            labelAside={
               <Link to="/forgot-password" className={`${LINK_CLASS} text-sm`}>
                 Forgot password?
               </Link>
-            </div>
-            <Input
-              id="login-password"
-              ref={passwordRef}
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              aria-invalid={errors.password !== undefined}
-              aria-describedby={
-                errors.password ? "login-password-error" : undefined
-              }
-              className={FIELD_CLASS}
-            />
-            <FieldError id="login-password-error" message={errors.password} />
-          </div>
+            }
+            inputRef={passwordRef}
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={setPassword}
+            error={errors.password}
+          />
 
           {signIn.isError && (
             // Fixed text on purpose: never echo the underlying error, so nothing about the account leaks.
@@ -167,11 +155,49 @@ export function LoginPage() {
   );
 }
 
-function FieldError({ id, message }: { id: string; message?: string }) {
-  if (!message) return null;
+type FieldProps = {
+  id: string;
+  label: string;
+  labelAside?: ReactNode;
+  inputRef: RefObject<HTMLInputElement | null>;
+  name: string;
+  type: "email" | "password";
+  autoComplete: string;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+};
+
+function Field({
+  id,
+  label,
+  labelAside,
+  inputRef,
+  onChange,
+  error,
+  ...input
+}: FieldProps) {
+  const errorId = `${id}-error`;
   return (
-    <p id={id} role="alert" className="text-destructive text-sm">
-      {message}
-    </p>
+    <div className="space-y-2">
+      <div className="flex items-baseline justify-between">
+        <Label htmlFor={id}>{label}</Label>
+        {labelAside}
+      </div>
+      <Input
+        id={id}
+        ref={inputRef}
+        {...input}
+        onChange={(e) => onChange(e.target.value)}
+        aria-invalid={error !== undefined}
+        aria-describedby={error ? errorId : undefined}
+        className={FIELD_CLASS}
+      />
+      {error && (
+        <p id={errorId} role="alert" className="text-destructive text-sm">
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
