@@ -1,10 +1,12 @@
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { GENERIC_SIGN_IN_ERROR } from "./auth-repository";
 import { SignInSchema } from "./auth-schema";
+import { useGoogleSignIn, useSignIn } from "./use-auth";
 
 const FIELD_CLASS = "h-11 text-base";
 const LINK_CLASS =
@@ -18,12 +20,22 @@ export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const navigate = useNavigate();
+  const signIn = useSignIn();
+  const googleSignIn = useGoogleSignIn();
+  const busy = signIn.isPending || googleSignIn.isPending;
+
+  function goHome() {
+    void navigate("/");
+  }
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const parsed = SignInSchema.safeParse({ email, password });
     if (parsed.success) {
       setErrors({});
+      googleSignIn.reset();
+      signIn.mutate(parsed.data, { onSuccess: goHome });
       return;
     }
     const next: FieldErrors = {};
@@ -56,7 +68,12 @@ export function LoginPage() {
       <section className="w-full max-w-sm space-y-8">
         <h1 className="text-2xl font-normal tracking-tight">Sign in</h1>
 
-        <form noValidate onSubmit={handleSubmit} className="space-y-6">
+        <form
+          noValidate
+          onSubmit={handleSubmit}
+          aria-busy={signIn.isPending}
+          className="space-y-6"
+        >
           <div className="space-y-2">
             <Label htmlFor="login-email">Email</Label>
             <Input
@@ -98,8 +115,19 @@ export function LoginPage() {
             <FieldError id="login-password-error" message={errors.password} />
           </div>
 
-          <Button type="submit" className="h-11 w-full text-base">
-            Sign in
+          {signIn.isError && (
+            // Fixed text on purpose: never echo the underlying error, so nothing about the account leaks.
+            <p role="alert" className="text-destructive text-sm">
+              {GENERIC_SIGN_IN_ERROR}
+            </p>
+          )}
+
+          <Button
+            type="submit"
+            disabled={busy}
+            className="h-11 w-full text-base"
+          >
+            {signIn.isPending ? "Signing in…" : "Sign in"}
           </Button>
         </form>
 
@@ -112,10 +140,21 @@ export function LoginPage() {
         <Button
           type="button"
           variant="outline"
+          disabled={busy}
+          onClick={() => {
+            signIn.reset();
+            googleSignIn.mutate(undefined, { onSuccess: goHome });
+          }}
           className="h-11 w-full text-base"
         >
           Continue with Google
         </Button>
+
+        {googleSignIn.isError && (
+          <p role="alert" className="text-destructive text-sm">
+            Could not sign in with Google. Please try again.
+          </p>
+        )}
 
         <p className="text-muted-foreground text-sm">
           New here?{" "}
