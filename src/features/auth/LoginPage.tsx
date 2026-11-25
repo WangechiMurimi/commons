@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { usePageTitle } from "@/lib/use-page-title";
 import { GENERIC_SIGN_IN_ERROR } from "./auth-repository";
 import { SignInSchema } from "./auth-schema";
 import { useGoogleSignIn, useSignIn } from "./use-auth";
@@ -15,6 +16,7 @@ const LINK_CLASS =
 type FieldErrors = { email?: string; password?: string };
 
 export function LoginPage() {
+  usePageTitle("Sign in");
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
